@@ -219,13 +219,14 @@ body.before-load {
 
 .canvas-caption {
   max-width: 1000px;
-  margin: 0em 0 auto;
+  margin: 25em auto 0;
   padding: 0 1rem;
 }
 
 .canvas-link {
   display: block;
-  width: 10vw;
+  width: 40vw;
+  margin: 0 auto 2em;
   padding: 1.5em 1em;
   border: 1px solid #ddd;
   border-radius: 2em;
@@ -396,10 +397,21 @@ body.before-load {
   }
 
   .canvas-caption {
-    margin-top: -20em;
+    margin-top: 0;
   }
 
   .canvas-caption p {
     font-size: 2rem;
+    margin: 0 auto 2em;
+  }
+
+  .canvas-link {
+    width: 20vw;
+  }
+}
+
+@media screen and (max-height: 800px) {
+  .canvas-caption {
+    margin-top: -20em;
   }
 }

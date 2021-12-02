@@ -28,7 +28,7 @@
       values: {
         videoImageCount: 694,
         imageSequence: [0, 693],
-        canvas_opacity: [1, 0, { start: 0.9, end: 1 }],
+        canvas_opacity: [1, 0, { start: 0.95, end: 1 }],
         messageA_opacity_in: [0, 1, { start: 0.08, end: 0.13 }],
         messageA_opacity_out: [1, 0, { start: 0.18, end: 0.23 }],
         messageA_translateY_in: [20, 0, { start: 0.08, end: 0.13 }],
@@ -80,7 +80,7 @@
     // currentScene = 3
     {
       type: "sticky",
-      heightNum: 4,
+      heightNum: 5,
       scrollHeight: 0,
       objs: {
         container: document.querySelector("#scroll-section-3"),
@@ -96,7 +96,7 @@
         blendHeight: [0, 0, { start: 0, end: 0 }],
         canvas_scale: [0, 0, { start: 0, end: 0 }],
         canvasCaption_opacity: [0, 1, { start: 0, end: 0 }],
-        canvasCaption_translateY: [20, 0, { start: 0, end: 0 }],
+        canvasCaption_translateY: [50, 0, { start: 0, end: 0 }],
         rectStartY: 0,
       },
     },
