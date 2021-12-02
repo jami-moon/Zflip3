@@ -13,8 +13,8 @@
     {
       // 타입에 따라 스크롤 영역을 다르게 만들어 줄 예정
       type: "sticky",
-      heightNum: 10,
-      //브라우저 높이의 5배로 scrollHeight 세팅할 예정(스크롤 영역을 길게 만들어야 하므로)
+      heightNum: 15,
+      //브라우저 높이에 heightNub 변수를 곱해 scrollHeight 세팅할 예정(스크롤 영역을 길게 만들어야 하므로)
       scrollHeight: 0,
       objs: {
         container: document.querySelector("#scroll-section-0"),
@@ -48,7 +48,7 @@
     // currentScene = 1
     {
       type: "normal",
-      // heightNum: 5, normal 타입에서는 필요 없음
+      // heightNum: 5, normal 타입에서는 스크롤 영역을 늘릴 필요가 없음
       scrollHeight: 0,
       objs: {
         container: document.querySelector("#scroll-section-1"),
@@ -77,8 +77,8 @@
         messageA_translateY_out: [0, -20, { start: 0.4, end: 0.45 }],
       },
     },
+    // currentScene = 3
     {
-      // currentScene = 3
       type: "sticky",
       heightNum: 4,
       scrollHeight: 0,
@@ -103,7 +103,7 @@
   ];
 
   function setCanvasImage() {
-    // 수 많은 이미지를 각 데이터 배열에 넣는 함수, 일일이 적을 수는 없으니
+    // 수 많은 이미지를 일일이 적을 수는 없으니 각 데이터 배열에 넣는 함수
     let imgElem;
     for (let i = 0; i < sceneInfo[0].values.videoImageCount; i++) {
       imgElem = new Image();
@@ -127,7 +127,7 @@
   }
 
   function checkMenu() {
-    // 아래의 yOffset 변수는 윈도우에 스크롤 이벤트핸들러에 선언함
+    // 아래의 yOffset 변수는 윈도우에 스크롤 이벤트핸들러에 선언
     if (yOffset > 44) {
       document.body.classList.add("local-sticky-nav");
     } else {
