@@ -3,11 +3,12 @@
   let prevScrollHeight = 0; //현재 스크롤 위치 보다 이전에 위치한 스크롤 섹션들 높이값의 합
   let currentScene = 0; //현재 활성화 된 (눈 앞에 보고 있는) 씬 (scroll-section)
   let enterNewScene = false; //새로운 Scene이 시작되는 순간 true가 되게 하고 싶은 변수
-  let acc = 0.1;
+  let acc = 0.1; // 가속도
   let delayedYOffset = 0;
   let rafId;
   let rafState;
 
+  // Scene 정보 객체
   const sceneInfo = [
     // currentScene = 0
     {
@@ -102,8 +103,8 @@
     },
   ];
 
+  // 수 많은 이미지를 각 데이터 배열에 넣는 함수
   function setCanvasImage() {
-    // 수 많은 이미지를 일일이 적을 수는 없으니 각 데이터 배열에 넣는 함수
     let imgElem;
     for (let i = 0; i < sceneInfo[0].values.videoImageCount; i++) {
       imgElem = new Image();
@@ -126,6 +127,7 @@
     }
   }
 
+  // 스크롤시 header 표현 함수
   function checkMenu() {
     // 아래의 yOffset 변수는 윈도우에 스크롤 이벤트핸들러에 선언
     if (yOffset > 44) {
@@ -135,6 +137,7 @@
     }
   }
 
+  // 레이아웃 세팅
   function setLayout() {
     // 각 스크롤 높이 세팅
     for (let i = 0; i < sceneInfo.length; i++) {
@@ -160,10 +163,11 @@
         break;
       }
     }
+
+    // 현재 scene에 맞는 내용만 보이기 위해 body에 id값 할당
     document.body.setAttribute("id", `show-scene-${currentScene}`);
 
     // 현재 창 크기에 맞게 캔버스 크기를 조절하기 위해서, 창의 가로 길이 중 더 긴 것에 맞춰질 수 있도록 비율 구해 scale 적용
-
     if (window.innerWidth <= window.innerHeight) {
       const canvasHeightRatio = window.innerHeight / 1080;
       sceneInfo[0].objs.canvas.style.transform = `translate3d(-50%, -50%, 0) scale(${canvasHeightRatio})`;
@@ -177,13 +181,14 @@
     }
   }
 
+  // CSS 속성 값을 y축 범위 비율에 맞게 변경하는 함수
   function calcValues(values, currentYOffset) {
-    // 현재 scene의 총 height 값과 현재 위치하고 있는 y축 위치의 비율을 따져서
+    // 현재 scene의 총 height 값에 비례한 현재 y축 위치의 비율 구하기
     let rv;
     const scrollHeight = sceneInfo[currentScene].scrollHeight;
     const scrollRatio = currentYOffset / scrollHeight;
 
-    // values의 프로퍼티가 3의 길이를 가진 배열이라면 즉, CSS 첫 값, 끝 값, start~end 지점을 가지는 배열을 가진 프로퍼티 라면, 함수실행
+    // values의 프로퍼티가 3의 길이를 가진 배열이라면 즉, CSS 첫 값, 끝 값, start~end 지점을 가지는 배열을 가진 프로퍼티 일 때 실행되는 함수
     if (values.length === 3) {
       // 2번 인덱스에 담아둔 start~end 비율 범위에 총 height를 곱해 실질적인 값을 가진 범위로 변경
       // 하나의 요소가 표현되는 start~end 지점 이므로 part라는 이름을 변수에 붙인 것
@@ -197,7 +202,7 @@
         currentYOffset >= partScrollStart &&
         currentYOffset <= partScrollEnd
       ) {
-        // 요소의 CSS가 시작되는 지점 부터 현재 위치 까지의 거리 '비율'을 CSS 값 범위에 곱한다.
+        // 요소의 CSS가 시작되는 지점 부터 현재 위치 까지의 거리 비율을 CSS 값 범위에 곱한다.
         // CSS범위를 구해줬으므로 CSS 시작 점의 값을 더해주면 현재 위치에서 가지는 CSS의 실질적인 값을 구할 수 있다. 여기서는 rv값
         rv =
           ((currentYOffset - partScrollStart) / partScrollHeight) *
@@ -214,6 +219,7 @@
     return rv;
   }
 
+  // 위에서 구한 값을 바탕으로한 스크롤 이벤트핸들러
   function playAnimation() {
     const objs = sceneInfo[currentScene].objs;
     const values = sceneInfo[currentScene].values;
@@ -226,6 +232,7 @@
         // 캔버스에 비디오 이미지를 그려주는 아래 코드는 감속을 적용시키기 위해 loop함수로 이동하여 적용
         // let sequence = Math.round(calcValues(values.imageSequence, currentYOffset));
         // objs.context.drawImage(objs.videoImages[sequence], 0, 0);
+
         objs.canvas.style.opacity = calcValues(
           values.canvas_opacity,
           currentYOffset
@@ -300,10 +307,6 @@
         break;
 
       case 2:
-        // console.log('2 play');
-        // let sequence2 = Math.round(calcValues(values.imageSequence, currentYOffset));
-        // objs.context.drawImage(objs.videoImages[sequence2], 0, 0);
-
         if (scrollRatio <= 0.5) {
           objs.canvas.style.opacity = calcValues(
             values.canvas_opacity_in,
@@ -338,9 +341,8 @@
           )}%, 0)`;
         }
 
-        // currentScene 3 에서 쓰는 캔버스를 미려 그려놓기 (화면상의 자연스러운 연결을 위해)
+        // 화면의 자연스러운 연결을 위해 currentScene 3 에서 쓰는 캔버스 이미지 미리 그리기
         if (scrollRatio > 0.9) {
-          // console.log('3 play');
           const objs = sceneInfo[3].objs;
           const values = sceneInfo[3].values;
           const widthRatio = window.innerWidth / objs.canvas.width;
@@ -361,8 +363,8 @@
           // 좌우 흰색 박스의 크기를 지정해주기 위해서는 캔버스에 곱해진 scale 을 다시 적용 전으로 돌리는 width와 height 값이 필요하다.
           const recalculatedInnerWidth =
             window.document.body.offsetWidth / canvasScaleRatio;
-          // const recalculatedInnerHeight = window.innerHeight / canvasScaleRatio; // 오류가 있어서 사용X, 강의에서도 결국 objs.canvas.height로 적용
-          const recalculatedInnerHeight = window.innerHeight / heightRatio; // 내가 바꾼 값
+          // const recalculatedInnerHeight = window.innerHeight / canvasScaleRatio; // 오류가 있어서 사용X
+          const recalculatedInnerHeight = window.innerHeight / heightRatio;
           const whiteRectWidth = recalculatedInnerWidth * 0.15;
           values.rect1X[0] = (objs.canvas.width - recalculatedInnerWidth) / 2;
           values.rect1X[1] = values.rect1X[0] - whiteRectWidth;
@@ -410,8 +412,8 @@
         // 스크롤 바를 제외하고 계산하기 위해 body.offsetWidth 사용
         const recalculatedInnerWidth =
           window.document.body.offsetWidth / canvasScaleRatio;
-        // const recalculatedInnerHeight = window.innerHeight / canvasScaleRatio; // 오류가 있어서 사용X, 강의에서도 결국 objs.canvas.height로 적용
-        const recalculatedInnerHeight = window.innerHeight / heightRatio; // 내가 바꾼 값
+        // const recalculatedInnerHeight = window.innerHeight / canvasScaleRatio; // 오류가 있어서 사용X
+        const recalculatedInnerHeight = window.innerHeight / heightRatio;
 
         if (!values.rectStartY) {
           // values.rectStartY = objs.canvas.getBoundingClientRect().top;
@@ -516,6 +518,7 @@
     }
   }
 
+  // 스크롤 이벤트핸들러
   function scrollLoop() {
     prevScrollHeight = 0;
     enterNewScene = false;
@@ -560,6 +563,7 @@
     playAnimation();
   }
 
+  // 이미지를 동영상 배경처럼 보이게 하는 함수
   function loop() {
     delayedYOffset = delayedYOffset + (yOffset - delayedYOffset) * acc;
     const currentYOffset = delayedYOffset - prevScrollHeight;
@@ -587,6 +591,7 @@
     }
   }
 
+  // 새로고침 이벤트
   window.addEventListener("load", () => {
     document.body.classList.remove("before-load");
 
@@ -597,6 +602,7 @@
     let templeYOffset = yOffset;
     let templeScrollCount = 0;
 
+    // 새로고침시 자동으로 스크롤이 조금 움직이게 하여 스크롤 이벤트핸들러 실행시키기
     if (yOffset > 0) {
       let siId = setInterval(() => {
         window.scrollTo(0, templeYOffset);
@@ -608,6 +614,7 @@
       }, 20);
     }
 
+    // 스크롤 이벤트
     window.addEventListener("scroll", () => {
       yOffset = window.pageYOffset;
       scrollLoop();
@@ -620,6 +627,7 @@
       }
     });
 
+    // 리사이즈 이벤트
     window.addEventListener("resize", () => {
       // 모바일 환경을 제외하고, 리사이즈 이벤트가 발생할 때  setLayout 재설정
       if (window.innerWidth > 900) {
